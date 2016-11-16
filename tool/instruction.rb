@@ -861,6 +861,11 @@ class RubyVM
 
     def make_header insn
       commit "INSN_ENTRY(#{insn.name}){"
+      commit "if (rb_iseq_eval_main_p && getenv(\"ENABLE_TRAP\")) {"
+      commit "  rb_vmdebug_stack_dump_raw_current();"
+      commit '  fprintf(stderr, "### Next: ' + insn.name + ' ########################\n");'
+      commit "  raise(SIGTRAP);"
+      commit "}"
       make_header_prepare_stack insn
       commit "{"
       make_header_stack_val  insn

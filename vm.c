@@ -223,6 +223,7 @@ VALUE ruby_vm_const_missing_count = 0;
 rb_thread_t *ruby_current_thread = 0;
 rb_vm_t *ruby_current_vm = 0;
 rb_event_flag_t ruby_vm_event_flags;
+int rb_iseq_eval_main_p;
 
 static void thread_free(void *ptr);
 
@@ -1889,6 +1890,7 @@ rb_iseq_eval_main(const rb_iseq_t *iseq)
     rb_thread_t *th = GET_THREAD();
     VALUE val;
 
+    rb_iseq_eval_main_p = 1;
     vm_set_main_stack(th, iseq);
     val = vm_exec(th);
     return val;

@@ -1237,4 +1237,6 @@ void rb_postponed_job_flush(rb_vm_t *vm);
 
 RUBY_SYMBOL_EXPORT_END
 
+extern int rb_iseq_eval_main_p;
+
 #endif /* RUBY_VM_CORE_H */
