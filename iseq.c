@@ -324,18 +324,20 @@ cleanup_iseq_build(rb_iseq_t *iseq)
     return Qtrue;
 }
 
-static rb_compile_option_t COMPILE_OPTION_DEFAULT = {
-    OPT_INLINE_CONST_CACHE, /* int inline_const_cache; */
-    OPT_PEEPHOLE_OPTIMIZATION, /* int peephole_optimization; */
-    OPT_TAILCALL_OPTIMIZATION, /* int tailcall_optimization */
-    OPT_SPECIALISED_INSTRUCTION, /* int specialized_instruction; */
-    OPT_OPERANDS_UNIFICATION, /* int operands_unification; */
-    OPT_INSTRUCTIONS_UNIFICATION, /* int instructions_unification; */
-    OPT_STACK_CACHING, /* int stack_caching; */
-    OPT_TRACE_INSTRUCTION, /* int trace_instruction */
-    OPT_FROZEN_STRING_LITERAL,
-    OPT_DEBUG_FROZEN_STRING_LITERAL,
-};
+static rb_compile_option_t COMPILE_OPTION_DEFAULT = {0};
+// static rb_compile_option_t COMPILE_OPTION_DEFAULT = {
+//     OPT_INLINE_CONST_CACHE, /* int inline_const_cache; */
+//     OPT_PEEPHOLE_OPTIMIZATION, /* int peephole_optimization; */
+//     OPT_TAILCALL_OPTIMIZATION, /* int tailcall_optimization */
+//     OPT_SPECIALISED_INSTRUCTION, /* int specialized_instruction; */
+//     OPT_OPERANDS_UNIFICATION, /* int operands_unification; */
+//     OPT_INSTRUCTIONS_UNIFICATION, /* int instructions_unification; */
+//     OPT_STACK_CACHING, /* int stack_caching; */
+//     OPT_TRACE_INSTRUCTION, /* int trace_instruction */
+//     OPT_FROZEN_STRING_LITERAL,
+//     OPT_DEBUG_FROZEN_STRING_LITERAL,
+// };
+
 
 static const rb_compile_option_t COMPILE_OPTION_FALSE = {0};
 
