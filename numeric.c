@@ -5242,7 +5242,16 @@ rb_int_s_isqrt(VALUE self, VALUE num)
 static VALUE
 int_add(VALUE self, VALUE n)
 {
-  return rb_int_plus(self, n);
+  if (FIXNUM_P(self) && FIXNUM_P(n)) {
+    int a = FIX2INT(self);
+    int b = FIX2INT(n);
+    int c = a + b;
+    VALUE result = INT2NUM(c);
+    return result;
+  }
+  else {
+    return rb_int_plus(self, n);
+  }
 }
 
 /*

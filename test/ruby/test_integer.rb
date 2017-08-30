@@ -510,4 +510,8 @@ class TestInteger < Test::Unit::TestCase
     end
     assert_empty(failures, bug13440)
   end
+
+  def test_add
+    assert_equal(3, 1.add(2))
+  end
 end
