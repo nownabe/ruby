@@ -1377,6 +1377,10 @@ rb_ary_first(int argc, VALUE *argv, VALUE ary)
 static VALUE
 ary_second(VALUE self)
 {
+  long len = RARRAY_LEN(self);
+  if (len < 2) {
+    rb_raise(rb_eIndexError, "array size is too small.");
+  }
   return rb_ary_entry(self, 1);
 }
     

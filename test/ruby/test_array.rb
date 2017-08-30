@@ -780,7 +780,7 @@ class TestArray < Test::Unit::TestCase
   # rhc
   def test_second
     assert_equal(4, @cls[3, 4, 5].second)
-    assert_equal(nil, @cls[].second)
+    assert_raise(IndexError) { @cls[1].second }
   end
 
   def test_flatten
