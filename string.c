@@ -10394,7 +10394,7 @@ rb_to_symbol(VALUE name)
     return rb_str_intern(name);
 }
 
-/* rhc */
+/* RHC */
 static VALUE
 str_palindrome_p(VALUE self)
 {
@@ -10405,6 +10405,19 @@ str_palindrome_p(VALUE self)
   return rb_str_empty(filtered_str) ? Qfalse :
          rb_str_equal(filtered_str, rb_str_reverse(filtered_str));
 }
+
+static VALUE palindrome_re;
+
+static VALUE
+str_palindrome2_p(VALUE self)
+{
+  VALUE argv[2] = {palindrome_re,
+                  rb_str_new_cstr("")};
+  VALUE filtered_str = rb_str_downcase(0, NULL, str_gsub(2, argv, self, FALSE));
+  return rb_str_empty(filtered_str) ? Qfalse :
+         rb_str_equal(filtered_str, rb_str_reverse(filtered_str));
+}
+
 
 /*
  *  A <code>String</code> object holds and manipulates an arbitrary sequence of
@@ -10571,7 +10584,12 @@ Init_String(void)
     rb_define_method(rb_cString, "valid_encoding?", rb_str_valid_encoding_p, 0);
     rb_define_method(rb_cString, "ascii_only?", rb_str_is_ascii_only_p, 0);
 
-    rb_define_method(rb_cString, "palindrome?", str_palindrome_p, 0); // rhc
+    /* RHC */
+    //const char *pat = "[^A-z0-9\\p{hiragana}\\p{katakana}]";
+    palindrome_re = rb_reg_regcomp(rb_utf8_str_new_cstr("[^A-z0-9\\p{hiragana}\\p{katakana}]"));
+    rb_gc_register_mark_object(palindrome_re);
+    rb_define_method(rb_cString, "palindrome?", str_palindrome_p, 0);
+    rb_define_method(rb_cString, "palindrome2?", str_palindrome2_p, 0);
 
     /* define UnicodeNormalize module here so that we don't have to look it up */
     mUnicodeNormalize          = rb_define_module("UnicodeNormalize");

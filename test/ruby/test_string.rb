@@ -2912,6 +2912,26 @@ CODE
     assert_equal("\u3042", "\u3042\u3043".chr)
     assert_equal('', ''.chr)
   end
+
+  def test_palindrome
+    ok = [
+      "Sator Arepo Tenet Opera Rotas",
+      "A man, a plan, a canal - Panama!",
+      "Madam, I'm Adam",
+      "NisiOisiN",
+      "わかみかものとかなかとのもかみかわ",
+      "アニマルマニア",
+    ]
+    ng = ["", "ab"]
+    ok.each do |str|
+      assert_predicate(str, :palindrome?)
+      assert_predicate(str, :palindrome2?)
+    end
+    ng.each do |str|
+      assert_not_predicate(str, :palindrome?)
+      assert_not_predicate(str, :palindrome2?)
+    end
+  end
 end
 
 class TestString2 < TestString
