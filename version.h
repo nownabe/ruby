@@ -61,7 +61,7 @@
 #endif
 
 # define RUBY_DESCRIPTION	    \
-    "ruby "RUBY_VERSION		    \
+    "Fedora "RUBY_VERSION		    \
     RUBY_PATCHLEVEL_STR		    \
     " ("RUBY_RELEASE_DATE	    \
     RUBY_REVISION_STR") "	    \

@@ -1362,6 +1362,25 @@ rb_ary_first(int argc, VALUE *argv, VALUE ary)
     }
 }
 
+/* RHC */
+/*
+ *  call-seq:
+ *     ary.second    ->   obj or nil
+ *
+ *  Returns the second element of the array.
+ *  If the array doesn't have second element, it returns +nil+.
+ *  See also Array#first.
+ *
+ *     a = [ "q", "r", "s", "t" ]
+ *     a.second    #=> "r"
+ */
+static VALUE
+ary_second(VALUE self)
+{
+  return rb_ary_entry(self, 1);
+}
+    
+
 /*
  *  call-seq:
  *     ary.last     ->  obj or nil
@@ -5902,6 +5921,8 @@ rb_ary_sum(int argc, VALUE *argv, VALUE ary)
     return v;
 }
 
+
+
 /*
  *  Arrays are ordered, integer-indexed collections of any object.
  *
@@ -6171,6 +6192,7 @@ Init_Array(void)
     rb_define_method(rb_cArray, "at", rb_ary_at, 1);
     rb_define_method(rb_cArray, "fetch", rb_ary_fetch, -1);
     rb_define_method(rb_cArray, "first", rb_ary_first, -1);
+    rb_define_method(rb_cArray, "second", ary_second, 0); // rhc
     rb_define_method(rb_cArray, "last", rb_ary_last, -1);
     rb_define_method(rb_cArray, "concat", rb_ary_concat_multi, -1);
     rb_define_method(rb_cArray, "<<", rb_ary_push, 1);

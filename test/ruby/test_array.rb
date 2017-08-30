@@ -777,6 +777,12 @@ class TestArray < Test::Unit::TestCase
     assert_equal(nil, @cls[].first)
   end
 
+  # rhc
+  def test_second
+    assert_equal(4, @cls[3, 4, 5].second)
+    assert_equal(nil, @cls[].second)
+  end
+
   def test_flatten
     a1 = @cls[ 1, 2, 3]
     a2 = @cls[ 5, 6 ]
