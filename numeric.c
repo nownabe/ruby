@@ -5254,6 +5254,19 @@ int_add(VALUE self, VALUE n)
   }
 }
 
+/* RHC */
+VALUE
+int_sub(VALUE self, VALUE n)
+{
+    if (FIXNUM_P(self)) {
+	return fix_minus(self, n);
+    }
+    else if (RB_TYPE_P(self, T_BIGNUM)) {
+	return rb_big_minus(self, n);
+    }
+    return rb_num_coerce_bin(self, n, '-');
+}
+
 /*
  *  Document-class: ZeroDivisionError
  *
@@ -5465,7 +5478,9 @@ Init_Numeric(void)
     rb_define_method(rb_cInteger, "bit_length", rb_int_bit_length, 0);
     rb_define_method(rb_cInteger, "digits", rb_int_digits, -1);
 
-    rb_define_method(rb_cInteger, "add", int_add, 1); // RHC
+    /* RHC */
+    rb_define_method(rb_cInteger, "add", int_add, 1);
+    rb_define_method(rb_cInteger, "sub", int_sub, 1);
 
 #ifndef RUBY_INTEGER_UNIFICATION
     rb_cFixnum = rb_cInteger;

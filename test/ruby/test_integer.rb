@@ -514,4 +514,8 @@ class TestInteger < Test::Unit::TestCase
   def test_add
     assert_equal(3, 1.add(2))
   end
+
+  def test_sub
+    assert_equal(-1, 1.sub(2))
+  end
 end
