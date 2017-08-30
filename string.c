@@ -10411,13 +10411,41 @@ static VALUE palindrome_re;
 static VALUE
 str_palindrome2_p(VALUE self)
 {
-  VALUE argv[2] = {palindrome_re,
-                  rb_str_new_cstr("")};
+  VALUE argv[2] = {palindrome_re, rb_str_new_cstr("")};
   VALUE filtered_str = rb_str_downcase(0, NULL, str_gsub(2, argv, self, FALSE));
+
   return rb_str_empty(filtered_str) ? Qfalse :
          rb_str_equal(filtered_str, rb_str_reverse(filtered_str));
 }
 
+static VALUE
+str_palindrome3_p(VALUE self)
+{
+  VALUE argv[2] = {palindrome_re, rb_str_new_cstr("")};
+  VALUE filtered_str = rb_str_downcase(0, NULL, str_gsub(2, argv, self, FALSE));
+
+  return rb_str_empty(filtered_str) ? Qfalse : str_eql(filtered_str, rb_str_reverse(filtered_str));
+}
+
+static VALUE
+str_palindrome4_p(VALUE self)
+{
+  const char *ptr;
+  long len;
+
+  VALUE argv[2] = {palindrome_re, rb_str_new_cstr("")};
+  VALUE filtered_str = rb_str_downcase(0, NULL, str_gsub(2, argv, self, FALSE));
+  len = RSTRING_LEN(filtered_str);
+
+  ptr = RSTRING_PTR(filtered_str);
+
+  if (len == 0) return Qfalse;
+
+  for (int i = 0; i < len / 2; i++)
+    if (*(ptr + i) != *(ptr + len - 1 - i)) return Qfalse;
+
+  return Qtrue;
+}
 
 /*
  *  A <code>String</code> object holds and manipulates an arbitrary sequence of
@@ -10590,6 +10618,8 @@ Init_String(void)
     rb_gc_register_mark_object(palindrome_re);
     rb_define_method(rb_cString, "palindrome?", str_palindrome_p, 0);
     rb_define_method(rb_cString, "palindrome2?", str_palindrome2_p, 0);
+    rb_define_method(rb_cString, "palindrome3?", str_palindrome3_p, 0);
+    rb_define_method(rb_cString, "palindrome4?", str_palindrome4_p, 0);
 
     /* define UnicodeNormalize module here so that we don't have to look it up */
     mUnicodeNormalize          = rb_define_module("UnicodeNormalize");
