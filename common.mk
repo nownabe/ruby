@@ -176,6 +176,7 @@ TESTWORKDIR   = testwork
 TESTOPTS      = $(RUBY_TESTOPTS)
 
 TESTRUN_SCRIPT = $(srcdir)/test.rb
+TESTGEM_SCRIPT = $(srcdir)/tool/testgem.rb
 
 COMPILE_PRELUDE = $(srcdir)/tool/generic_erb.rb $(srcdir)/template/prelude.c.tmpl
 
@@ -942,6 +943,9 @@ run: fake miniruby$(EXEEXT) PHONY
 
 runruby: $(PROGRAM) PHONY
 	$(RUNRUBY) $(TESTRUN_SCRIPT)
+
+testgem: $(PROGRAM) PHONY
+	$(RUNRUBY_COMMAND) $(TESTGEM_SCRIPT) ${GEMS}
 
 parse: fake miniruby$(EXEEXT) PHONY
 	$(BTESTRUBY) $(srcdir)/tool/parse.rb $(TESTRUN_SCRIPT)

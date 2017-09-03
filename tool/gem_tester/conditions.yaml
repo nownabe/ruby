@@ -1,0 +1,84 @@
+# Configurations for testing gems.
+#
+# Each key of this yaml means gem name to be tested.
+# Values of them are configuration hash or nil.
+#
+# If nil, test script tries to detect configurations automatically.
+#
+# Configuration hash can have following keys:
+#
+#   additonal_dependencies
+#
+#     Required gems to execute test.
+#
+#   branch
+#
+#     Git branch or tag to be tested.
+#
+#   bundler
+#
+#     Use bundler.
+#     true / false (default is true).
+#
+#   exec
+#
+#     Test command after `bundle exec`.
+#
+#   github
+#
+#     GitHub repository.
+#
+#   precommand
+#
+#     Command before test.
+#
+#   rake
+#
+#     Task name to test.
+#
+#   root
+#
+#     Root path of the gem in repository.
+#
+#   test
+#
+#     Test command.
+
+# requires many dependencies
+#   mysql, postgresql, ...
+activesupport:
+  github: rails/rails
+  root: /activesupport
+
+benchmark_driver:
+
+# TODO: fix failure
+# bundler:
+#   bundler: false
+#   precommand: bin/rake spec:deps
+#   test: bin/rake spec
+
+i18n:
+
+# requires ragel
+json:
+  github: flori/json
+  rake: test_pure JSON=pure
+
+mime-types:
+multi_json:
+
+# requires fcgi
+rack:
+  github: rack/rack
+
+rake:
+
+thor:
+  additional_dependencies:
+    - rspec
+  exec: thor spec
+  github: erikhuda/thor
+
+tzinfo:
+  github: tzinfo/tzinfo
