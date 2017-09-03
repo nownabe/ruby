@@ -1,0 +1,322 @@
+# Configurations for testing gems.
+#
+# Each key of this yaml means gem name to be tested.
+# Values of them are configuration hash or nil.
+#
+# If nil, test script tries to detect configurations automatically.
+#
+# Now Top 100 gems are listed.
+# See http://bestgems.org/total.
+
+arel:
+
+# rails requires many dependencies
+#   mysql, postgresql, ...
+actionmailer:
+  github: rails/rails
+  root: /actionmailer
+
+actionpack:
+  github: rails/rails
+  root: /actionpack
+
+actionview:
+  github: rails/rails
+  root: /actionview
+
+activejob:
+  github: rails/rails
+  root: /activejob
+
+activemodel:
+  github: rails/rails
+  root: /activemodel
+
+# IGNORE: requires real databases
+# activerecord:
+#   github: rails/rails
+#   root: /activerecord
+
+activeresource:
+  github: rails/activeresource
+
+activesupport:
+  github: rails/rails
+  root: /activesupport
+
+# requires libidn
+addressable:
+
+# IGNORE: CI doesn't pass.
+# awesome_print:
+
+aws-sdk:
+  github: aws/aws-sdk-ruby
+  rake: test:spec
+
+# IGNORE: aws-sdk covers this test.
+# aws-sdk-core:
+#   root: /gems/aws-sdk-core
+
+# IGNORE: aws-sdk covers this test.
+# aws-sdk-resources:
+#   root: /gems/aws-sdk-resources
+
+benchmark_driver:
+
+# IGNORE: How can I test this?
+# builder:
+#   additional_dependencies:
+#     - rake-contrib
+#   github: jimweirich/builder
+
+
+# IGNORE:
+# requires valid directory path.
+# The bundler specs cannot be run from a path that contains special characters (particularly "-")
+# bundler:
+#   precommand: bin/rake spec:deps
+#   command: bin/rake spec
+
+coderay:
+  github: rubychan/coderay
+
+coffee-rails:
+  gemfile: gemfiles/Gemfile-5-0-stable
+
+coffee-script:
+
+# IGNORE: Where is the repository?
+# coffee-script-source:
+
+daemons:
+
+diff-lcs:
+
+domain_name:
+
+# IGNORE: How can I test this?
+# erubis:
+#   command: ruby test/test.rb
+#   github: kwatch/erubis
+
+# IGNORE: Failed with installed Ruby v2.4.2
+# eventmachine:
+#   github: eventmachine/eventmachine
+
+excon:
+
+execjs:
+  rake: test:duktape test:node test:rubyracer
+
+# requires libcurl
+faraday:
+
+# requires automake, libtool
+ffi:
+  precommand: git submodule update --init --recursive
+
+formatador:
+  github: geemus/formatador
+
+globalid:
+  gemfile: gemfiles/rails_5.1.gemfile
+  github: rails/globalid
+  precommand: rm -f Gemfile.lock; bundle update
+  postcommand: git checkout -- Gemfile.lock
+
+hashie:
+  rake: spec
+
+# IGNORE: Failed with installed Ruby v2.4.1
+# hike:
+
+highline:
+
+http-cookie:
+
+httparty:
+  github: jnunemaker/httparty
+
+i18n:
+
+jbuilder:
+  precommand: appraisal install
+  command: appraisal rake test
+
+jmespath:
+
+# requires ragel
+json:
+  github: flori/json
+  rake: test_pure JSON=pure
+
+jquery-rails:
+
+loofah:
+
+mail:
+
+method_source:
+  github: banister/method_source
+
+mime-types:
+
+mini_portile:
+
+mini_portile2:
+
+minitest:
+
+multi_json:
+
+# IGNORE: Failed with installed Ruby v2.4.2
+# multi_xml:
+
+multipart-post:
+
+# IGNORE:
+# mysql2:
+
+# IGNORE: Failed with installed Ruby v2.4.2
+# net-scp:
+#   additional_dependencies:
+#     - mocha
+#     - net-ssh
+#     - test-unit
+#   rake: test
+
+net-ssh:
+
+# IGNORE: Failed with installed Ruby v2.4.2. Test has a bug.
+# netrc:
+#   command: ruby -e 'Dir.glob "./test/**/test_*.rb", &method(:require)'
+
+nokogiri:
+  github: sparklemotion/nokogiri
+
+# IGNORE: requires real PostgreSQL
+# pg:
+#   github: ged/ruby-pg
+#   rake: compile test
+
+# IGNORE: No test
+# polyglot:
+#   additional_dependencies:
+#     - jeweler
+
+pry:
+
+# requires fcgi
+rack:
+
+rack-protection:
+  github: sinatra/sinatra
+  root: /rack-protection
+
+rack-test:
+  rake: spec
+
+rake:
+
+# IGNORE: Bundler::VersionConflict
+# rails-deprecated_sanitizer:
+
+rails-dom-testing:
+
+rails-html-sanitizer:
+
+# IGNORE: Failed with installed Ruby v2.4.2
+# railties:
+#   github: rails/rails
+#   root: /railties
+
+# TODO: Only macOS
+# rb-fsevent:
+
+# TODO: Only Linux
+# rb-inotify:
+
+redis:
+  command: make test
+
+rdoc:
+  github: ruby/rdoc
+
+rest-client:
+  rake: test
+
+rspec-core:
+  rake: spec cucumber
+
+rspec-expectations:
+
+rspec-mocks:
+
+# IGNORE: Failed with installed Ruby v2.4.2
+# rspec-rails:
+
+# IGNORE: Failed with installed Ruby v2.4.2
+# rspec-support:
+
+# IGNORE: tests requires rvm
+# requires jabberd and tinyfugue
+# rubygems-bundler:
+#   command: tf --text test/dtf/*
+#   github: rvm/rubygems-bundler
+
+# IGNORE: Where is the repository?
+# rubygems-update:
+
+rubyzip:
+
+sass:
+  rake: test:ruby test:spec
+
+# IGNORE: Failed with installed Ruby v2.4.1
+# sass-rails:
+
+sdoc:
+
+sinatra:
+
+slop:
+
+sprockets:
+
+sprockets-rails:
+
+sqlite3:
+
+# IGNORE: randomly fails
+# thin:
+#   precommand: rake clean
+
+thor:
+  additional_dependencies:
+    - rspec
+  exec: thor spec
+  github: erikhuda/thor
+
+thread_safe:
+  precommand: rake clean
+
+# IGNORE: requires gliderlabs/sigil
+# requires pandoc
+# tilt:
+
+treetop:
+
+# IGNORE: Failed with installed Ruby v2.4.1
+# Failed to build json 1.8.3
+# turbolinks:
+
+tzinfo:
+
+uglifier:
+  rake: spec
+
+unf:
+
+unf_ext:
+  precommand: rake compile
