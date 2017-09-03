@@ -1,0 +1,313 @@
+# Configurations for testing gems.
+#
+# Each key of this yaml means gem name to be tested.
+# Values of them are configuration hash or nil.
+#
+# If nil, test script tries to detect configurations automatically.
+#
+# Now Top 100 gems are listed.
+# See http://bestgems.org/total.
+
+arel:
+
+# rails requires many dependencies
+#   mysql, postgresql, ...
+actionmailer:
+  github: rails/rails
+  root: /actionmailer
+
+actionpack:
+  github: rails/rails
+  root: /actionpack
+
+actionview:
+  github: rails/rails
+  root: /actionview
+
+activejob:
+  github: rails/rails
+  root: /activejob
+
+activemodel:
+  github: rails/rails
+  root: /activemodel
+
+# IGNORE: requires real databases
+# activerecord:
+#   github: rails/rails
+#   root: /activerecord
+
+activeresource:
+  github: rails/activeresource
+
+activesupport:
+  github: rails/rails
+  root: /activesupport
+
+addressable:
+
+# IGNORE: CI doesn't pass.
+# awesome_print:
+
+# TODO:
+# aws-sdk:
+#   github: aws/aws-sdk-ruby
+
+# TODO:
+# aws-sdk-core:
+#   root: /gems/aws-sdk-core
+
+# TODO:
+# aws-sdk-resources:
+#   root: /gems/aws-sdk-resources
+
+benchmark_driver:
+
+# TODO: How can I test this?
+# builder:
+#   additional_dependencies:
+#     - rake-contrib
+#   github: jimweirich/builder
+
+
+# TODO: fix failure
+# bundler:
+#   precommand: bin/rake spec:deps
+#   command: bin/rake spec
+
+coderay:
+  github: rubychan/coderay
+
+
+# TODO: Failed with installed Ruby v2.4.1 (bundle install)
+# coffee-rails:
+
+coffee-script:
+
+# TODO: Where is the repository?
+# coffee-script-source:
+
+daemons:
+
+diff-lcs:
+
+domain_name:
+
+# TODO: How can I test this?
+# erubis:
+#   command: ruby test/test.rb
+#   github: kwatch/erubis
+
+# TODO:
+# eventmachine:
+#   github: eventmachine/eventmachine
+
+excon:
+
+# TODO: Failed with installed Ruby v2.4.1
+# execjs:
+
+# requires libcurl
+faraday:
+
+# TODO: Failed with installed Ruby v2.4.1
+# ffi:
+
+formatador:
+
+globalid:
+  github: rails/globalid
+  precommand: rm -f Gemfile.lock; bundle update
+  postcommand: git checkout -- Gemfile.lock
+
+hashie:
+  rake: spec
+
+# TODO: Failed with installed Ruby v2.4.1
+# hike:
+
+highline:
+
+http-cookie:
+
+httparty:
+  github: jnunemaker/httparty
+
+i18n:
+
+jbuilder:
+
+jmespath:
+
+# requires ragel
+json:
+  github: flori/json
+  rake: test_pure JSON=pure
+
+jquery-rails:
+
+loofah:
+
+mail:
+
+method_source:
+  github: banister/method_source
+
+mime-types:
+
+mini_portile:
+
+mini_portile2:
+
+minitest:
+
+multi_json:
+
+# TODO:
+# multi_xml:
+
+multipart-post:
+
+# TODO:
+# mysql2:
+
+# TODO: Failed with installed Ruby v2.1.4
+# net-scp:
+#   additional_dependencies:
+#     - mocha
+#     - net-ssh
+#     - test-unit
+#   rake: test
+
+net-ssh:
+
+# TODO:
+# netrc:
+#   command: ruby -e 'Dir.glob "./test/**/test_*.rb", &method(:require)'
+
+nokogiri:
+  github: sparklemotion/nokogiri
+
+# IGNORE: requires real PostgreSQL
+# pg:
+#   github: ged/ruby-pg
+#   rake: compile test
+
+# IGNORE: No test
+# polyglot:
+#   additional_dependencies:
+#     - jeweler
+
+# TODO:
+# pry:
+
+# requires fcgi
+rack:
+
+rack-protection:
+
+rack-test:
+  rake: spec
+
+rake:
+
+# TODO: Bundler::VersionConflict
+# rails-deprecated_sanitizer:
+
+rails-dom-testing:
+
+rails-html-sanitizer:
+
+# TODO:
+# railties:
+#   github: rails/rails
+#   root: /railties
+
+# TODO: Only macOS
+# rb-fsevent:
+
+rb-inotify:
+
+redis:
+  command: make test
+
+rdoc:
+  github: ruby/rdoc
+
+rest-client:
+  rake: test
+
+# TODO: Fix failure
+# rspec-core:
+#   rake: spec cucumber
+
+rspec-expectations:
+
+# TODO: Fix failure
+# rspec-mocks:
+
+# TODO:
+# rspec-rails:
+
+# TODO: Failed with installed Ruby v2.4.1
+# rspec-support:
+
+# IGNORE: tests requires rvm
+# requires jabberd and tinyfugue
+# rubygems-bundler:
+#   command: tf --text test/dtf/*
+#   github: rvm/rubygems-bundler
+
+# TODO: Where is the repository?
+# rubygems-update:
+
+rubyzip:
+
+sass:
+  rake: test:ruby test:spec
+
+# TODO: Failed with installed Ruby v2.4.1
+# sass-rails:
+
+sdoc:
+
+sinatra:
+
+slop:
+
+sprockets:
+
+sprockets-rails:
+
+sqlite3:
+
+# TODO: Fix failure.
+# thin:
+
+thor:
+  additional_dependencies:
+    - rspec
+  exec: thor spec
+  github: erikhuda/thor
+
+# TODO: Fix failure.
+# thread_safe:
+
+# TODO: Failed with installed Ruby v2.4.1
+# requires pandoc
+# tilt:
+
+treetop:
+
+# IGNORE: Failed with installed Ruby v2.4.1
+# Failed to build json 1.8.3
+# turbolinks:
+
+tzinfo:
+
+uglifier:
+
+unf:
+
+unf_ext:
+  precommand: rake compile

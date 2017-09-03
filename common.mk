@@ -177,6 +177,7 @@ TESTWORKDIR   = testwork
 TESTOPTS      = $(RUBY_TESTOPTS)
 
 TESTRUN_SCRIPT = $(srcdir)/test.rb
+TESTGEM_SCRIPT = $(srcdir)/tool/test_gems.rb
 
 COMPILE_PRELUDE = $(srcdir)/tool/generic_erb.rb $(srcdir)/template/prelude.c.tmpl
 
@@ -691,6 +692,9 @@ test-ruby: $(TEST_RUNNABLE)-test-ruby
 no-test-ruby: PHONY
 yes-test-ruby: prog encs PHONY
 	$(gnumake_recursive)$(RUNRUBY) "$(srcdir)/test/runner.rb" $(TEST_EXCLUDES) $(TESTOPTS) -- ruby -ext-
+
+test-gems: $(PROGRAM) PHONY
+	$(RUNRUBY_COMMAND) $(TESTGEM_SCRIPT) ${OPTIONS} ${GEMS}
 
 extconf: $(PREP)
 	$(Q) $(MAKEDIRS) "$(EXTCONFDIR)"
