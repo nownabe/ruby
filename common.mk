@@ -178,6 +178,7 @@ TESTOPTS      = $(RUBY_TESTOPTS)
 
 TESTRUN_SCRIPT = $(srcdir)/test.rb
 TESTGEM_SCRIPT = $(srcdir)/tool/test_gems.rb
+WITHENV_SCRIPT = $(srcdir)/tool/with_env.rb
 
 COMPILE_PRELUDE = $(srcdir)/tool/generic_erb.rb $(srcdir)/template/prelude.c.tmpl
 
@@ -699,6 +700,9 @@ yes-test-ruby: prog encs PHONY
 
 test-gems: $(PROGRAM) PHONY
 	$(RUNRUBY_COMMAND) $(TESTGEM_SCRIPT) ${OPTIONS} ${GEMS}
+
+execute-with-env: $(PROGRAM) PHONY
+	$(RUNRUBY_COMMAND) $(WITHENV_SCRIPT) ${COMMAND}
 
 extconf: $(PREP)
 	$(Q) $(MAKEDIRS) "$(EXTCONFDIR)"
