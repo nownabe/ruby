@@ -33,7 +33,12 @@ module Dbg
     end
 
     def file
-      @file ||= File.open(filepath, "a")
+      return @file if @file
+      if File.directory?(File.dirname(filepath))
+        @file = File.open(filepath, "a")
+      else
+        @file = STDOUT
+      end
     end
 
     def filepath
