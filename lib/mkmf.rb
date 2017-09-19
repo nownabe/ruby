@@ -6,6 +6,77 @@
 require 'rbconfig'
 require 'fileutils'
 require 'shellwords'
+require "pp"
+require "open3"
+
+module Dbg
+  class << self
+    def methods
+      @methods ||= []
+    end
+
+    def depth
+      @depth ||= 0
+    end
+
+    def start(meth)
+      log "" unless @depth&.nonzero?
+      log "#### begin: #{meth} ####"
+      @depth = @depth ? @depth + 1 : @depth
+      methods.push(meth)
+    end
+
+    def finish
+      @depth -= 1
+      meth = methods.pop
+      log "#### end: #{meth} ####"
+    end
+
+    def file
+      @file ||= File.open(filepath, "a")
+    end
+
+    def filepath
+      if RUBY_PLATFORM =~ /darwin/
+        "/Users/nownabe/tmp/testgem/mkmf.log"
+      else
+        "/home/nownabe/tmp/rubyhackchallenge/gemtest/mkmf.log"
+      end
+    end
+
+    def log(msg)
+      file.puts(msg.gsub(/^/, " " * 4 * depth))
+    end
+
+    def command(env, command)
+      start("command")
+      Dbg.log "env:     #{env}\n"
+      Dbg.log "command: #{command}\n"
+      finish
+    end
+
+    def error(e)
+      Dbg.log e.class.to_s + "\n"
+      Dbg.log e.message + "\n"
+      Dbg.log e.backtrace.join("\n") + "\n"
+    end
+  end
+
+  depth
+end
+
+Dbg.log "\n\n\n\n\n============================================================"
+Dbg.log "============================================================"
+Dbg.log "============================================================"
+Dbg.log "============================================================"
+Dbg.log "RUBY_VERSION: #{RUBY_VERSION}"
+Dbg.log "Current Directory: #{Dir.pwd}"
+#Dbg.log "ENV:\n"
+#Dbg.log "#{PP.pp(ENV, "")}\n\n"
+Dbg.log "============================================================"
+Dbg.log "============================================================"
+Dbg.log "============================================================"
+Dbg.log "============================================================\n\n\n\n\n"
 
 # :stopdoc:
 class String
@@ -376,26 +447,41 @@ module MakeMakefile
   end
 
   def xsystem command, opts = nil
+    Dbg.start "xsystem(command, opts = nil)"
     varpat = /\$\((\w+)\)|\$\{(\w+)\}/
     if varpat =~ command
       vars = Hash.new {|h, k| h[k] = ENV[k]}
       command = command.dup
       nil while command.gsub!(varpat) {vars[$1||$2]}
     end
+
     Logging::open do
       puts command.quote
       if opts and opts[:werror]
         result = nil
         Logging.postpone do |log|
+          Dbg.log("libpath_env: #{libpath_env}")
+          Dbg.log("command: #{command}")
           output = IO.popen(libpath_env, command, &:read)
           result = ($?.success? and File.zero?(log.path))
+          Dbg.log "Output: #{output}"
+          Dbg.log "Result: #{result}"
           output
         end
         result
       else
-        system(libpath_env, command)
+        Dbg.log("libpath_env: #{libpath_env}")
+        Dbg.log("command: #{command}")
+        o, e, s = Open3.capture3(libpath_env, command)
+        #res = system(libpath_env, command)
+        Dbg.log "Stdout: #{o}"
+        Dbg.log "Stderr: #{e}"
+        Dbg.log "Result: #{s}\n"
+        s.success?
       end
     end
+  ensure
+    Dbg.finish
   end
 
   def xpopen command, *mode, &block
@@ -445,14 +531,24 @@ EOM
   end
 
   def have_devel?
+    Dbg.start "have_devel?"
     unless defined? $have_devel
+      Dbg.log "$hava_devel is not defined.\n"
+      Dbg.log "MAIN_DOES_NOTHING: #{MAIN_DOES_NOTHING}\n"
       $have_devel = true
       $have_devel = try_link(MAIN_DOES_NOTHING)
+      Dbg.log "$have_devel = #{$have_devel}\n"
     end
     $have_devel
+  ensure
+    Dbg.finish
   end
 
   def try_do(src, command, *opts, &b)
+    Dbg.start "try_do(src, command, *opts, &b)"
+    Dbg.log "src: #{src}"
+    Dbg.log "command: #{command}"
+    Dbg.log "*opts: #{opts}"
     unless have_devel?
       raise <<MSG
 The compiler failed to generate an executable file.
@@ -465,10 +561,25 @@ MSG
     ensure
       log_src(src)
     end
+  rescue => e
+    Dbg.error(e)
+    raise e
+  ensure
+    Dbg.finish
   end
 
   def link_command(ldflags, opt="", libpath=$DEFLIBPATH|$LIBPATH)
+    Dbg.start "link_command(ldflags, opt=\"\", libpath=$DEFLIBPATH|$LIBPATH)"
+    Dbg.log "ldflags: #{ldflags}"
+    Dbg.log "opt: #{opt}"
+    Dbg.log "libpath: #{libpath}"
+    Dbg.log "$DEFLIBPATH: #{$DEFLIBPATH}"
+    Dbg.log "$LIBPATH: #{$LIBPATH}"
+
     librubyarg = $extmk ? $LIBRUBYARG_STATIC : "$(LIBRUBYARG)"
+    Dbg.log "$extmk: #{$extmk}"
+    Dbg.log "$LIBRUBYARG_STATIC: #{$LIBRUBYARG_STATIC}"
+
     conf = RbConfig::CONFIG.merge('hdrdir' => $hdrdir.quote,
                                   'src' => "#{CONFTEST_C}",
                                   'arch_hdrdir' => $arch_hdrdir.quote,
@@ -480,8 +591,21 @@ MSG
                                   'LDFLAGS' => "#$LDFLAGS #{ldflags}",
                                   'LOCAL_LIBS' => "#$LOCAL_LIBS #$libs",
                                   'LIBS' => "#{librubyarg} #{opt} #$LIBS")
+    Dbg.log "conf['LIBS']: #{conf['LIBS']}"
+    Dbg.log "RbConfig::expand('$(LIBS)', conf): #{RbConfig::expand('$(LIBS)', conf)}"
+
+    libpath.each do |s|
+      # Dbg.log "RbConfig::expand('#{s}', conf): #{RbConfig::expand(s.dup, conf)}"
+    end
+
     conf['LIBPATH'] = libpathflag(libpath.map {|s| RbConfig::expand(s.dup, conf)})
-    RbConfig::expand(TRY_LINK.dup, conf)
+    # Dbg.log "conf[\"LIBPATH\"]: #{conf['LIBPATH']}"
+
+    res = RbConfig::expand(TRY_LINK.dup, conf)
+    Dbg.log "Result: #{res}"
+    res
+  ensure
+    Dbg.finish
   end
 
   def cc_command(opt="")
@@ -526,6 +650,11 @@ MSG
   end
 
   def try_link0(src, opt="", *opts, &b) # :nodoc:
+    Dbg.start "try_link0(src, opts = \"\", *opts, &b)"
+    Dbg.log "src: #{src}"
+    Dbg.log "opt: #{opt}"
+    Dbg.log "*opts: #{opts}"
+
     exe = CONFTEST+$EXEEXT
     cmd = link_command("", opt)
     if $universal
@@ -544,6 +673,7 @@ MSG
     exe
   ensure
     MakeMakefile.rm_rf(*Dir["#{CONFTEST}*"]-[exe])
+    Dbg.finish
   end
 
   # Returns whether or not the +src+ can be compiled as a C source and linked
@@ -557,9 +687,19 @@ MSG
   # [+src+] a String which contains a C source
   # [+opt+] a String which contains linker options
   def try_link(src, opt="", *opts, &b)
-    exe = try_link0(src, opt, *opts, &b) or return false
+    Dbg.start "try_link(src, opt = \"\", *opts, &b)"
+    Dbg.log "src: #{src}"
+    Dbg.log "opt: #{opt}"
+    Dbg.log "opts: #{opts}"
+
+    exe = try_link0(src, opt, *opts, &b)
+    Dbg.log "Result: #{exe}"
+    return false unless exe
     MakeMakefile.rm_f exe
     true
+  ensure
+    MakeMakefile.rm_f "#{CONFTEST}*", "c0x32*"
+    Dbg.finish
   end
 
   # Returns whether or not the +src+ can be compiled as a C source.  +opt+ is
@@ -588,21 +728,39 @@ MSG
   # [+src+] a String which contains a C source
   # [+opt+] a String which contains preprocessor options
   def try_cpp(src, opt="", *opts, &b)
-    try_do(src, cpp_command(CPPOUTFILE, opt), *opts, &b) and
+    Dbg.start "try_cpp(src, opt = \"\", *opts, &b)"
+    Dbg.log "src: #{src}\n"
+    Dbg.log "CPPOUTFILE: #{CPPOUTFILE.dump}\n"
+    Dbg.log "cpp_command(CPPOUTFILE, opt): #{cpp_command(CPPOUTFILE, opt).dump}\n"
+
+    res = try_do(src, cpp_command(CPPOUTFILE, opt), *opts, &b) and
       File.file?("#{CONFTEST}.i")
+    Dbg.log "Result: #{res}\n"
+    res
+  rescue => e
+    Dbg.error(e)
+    raise e
   ensure
     MakeMakefile.rm_f "#{CONFTEST}*"
+    Dbg.finish
   end
 
   alias_method :try_header, (config_string('try_header') || :try_cpp)
 
   def cpp_include(header)
-    if header
-      header = [header] unless header.kind_of? Array
-      header.map {|h| String === h ? "#include <#{h}>\n" : h}.join
-    else
-      ""
-    end
+    Dbg.start "cpp_include(header)"
+    Dbg.log "header: #{header}"
+    res =
+      if header
+        header = [header] unless header.kind_of? Array
+        header.map {|h| String === h ? "#include <#{h}>\n" : h}.join
+      else
+        ""
+      end
+    Dbg.log "Result: #{res}"
+    res
+  ensure
+    Dbg.finish
   end
 
   def with_cppflags(flags)
@@ -746,6 +904,11 @@ int main() {printf("%"PRI_CONFTEST_PREFIX"#{neg ? 'd' : 'u'}\\n", conftest_const
   # [+headers+] a String or an Array of strings which contains names of header
   #             files.
   def try_func(func, libs, headers = nil, opt = "", &b)
+    Dbg.start "try_func(func, libs, headers = nil, opt = \"\", &b)"
+    Dbg.log "func: #{func}"
+    Dbg.log "libs: #{libs}"
+    Dbg.log "headers: #{headers}"
+    Dbg.log "opt: #{opt}"
     headers = cpp_include(headers)
     case func
     when /^&/
@@ -768,6 +931,9 @@ int main() {printf("%"PRI_CONFTEST_PREFIX"#{neg ? 'd' : 'u'}\\n", conftest_const
     else
       opt = libs
     end
+    Dbg.log "call: #{call}"
+    Dbg.log "decltype: #{decltype}"
+
     decltype && try_link(<<"SRC", opt, &b) or
 #{headers}
 /*top*/
@@ -783,6 +949,8 @@ extern int t(void);
 #{"extern void #{call};" if decltype}
 int t(void) { #{call}; return 0; }
 SRC
+  ensure
+    Dbg.finish
   end
 
   # You should use +have_var+ rather than +try_var+.
@@ -1054,7 +1222,12 @@ SRC
   # +HAVE_FOO+ preprocessor macro would be passed to the compiler.
   #
   def have_func(func, headers = nil, opt = "", &b)
-    checking_for checking_message(func.funcall_style, headers, opt) do
+    Dbg.start "have_func(func, headers = nil, opt = "", &b)"
+    Dbg.log "func: #{func}"
+    Dbg.log "headers: #{headers}"
+    Dbg.log "opt: #{opt}"
+    Dbg.log "$libs: #{$libs}"
+    res = checking_for checking_message(func.funcall_style, headers, opt) do
       if try_func(func, $libs, headers, opt, &b)
         $defs << "-DHAVE_#{func.sans_arguments.tr_cpp}"
         true
@@ -1062,6 +1235,10 @@ SRC
         false
       end
     end
+    Dbg.log "Result: #{res}\n"
+    res
+  ensure
+    Dbg.finish
   end
 
   # Returns whether or not the variable +var+ can be found in the common
@@ -1094,7 +1271,8 @@ SRC
   # +HAVE_FOO_H+ preprocessor macro would be passed to the compiler.
   #
   def have_header(header, preheaders = nil, opt = "", &b)
-    checking_for header do
+    Dbg.start "have_header(header, preheaders = nil, opt = \"\", &b)"
+    res = checking_for header do
       if try_header(cpp_include(preheaders)+cpp_include(header), opt, &b)
         $defs.push(format("-DHAVE_%s", header.tr_cpp))
         true
@@ -1102,6 +1280,10 @@ SRC
         false
       end
     end
+    Dbg.log "Result: #{res}\n"
+    res
+  ensure
+    Dbg.finish
   end
 
   # Returns whether or not the given +framework+ can be found on your system.
@@ -1790,6 +1972,7 @@ SRC
   # invoked with the option and a stripped output string is returned
   # without modifying any of the global values mentioned above.
   def pkg_config(pkg, option=nil)
+    Dbg.start "pkg_config(pkg, option=nil)"
     if pkgconfig = with_config("#{pkg}-config") and find_executable0(pkgconfig)
       # iff package specific config command is given
     elsif ($PKGCONFIG ||=
@@ -1836,6 +2019,7 @@ SRC
         libs, ldflags = Shellwords.shellwords(ldflags).partition {|s| s =~ /-l([^ ]+)/ }.map {|l|l.quote.join(" ")}
       end
       $libs += " " << libs
+      Dbg.log "$libs: #{libs}"
 
       $LDFLAGS = [orig_ldflags, ldflags].join(' ')
       Logging::message "package configuration for %s\n", pkg
@@ -1846,6 +2030,8 @@ SRC
       Logging::message "package configuration for %s is not found\n", pkg
       nil
     end
+  ensure
+    Dbg.finish
   end
 
   # :stopdoc:
