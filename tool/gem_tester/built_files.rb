@@ -21,13 +21,13 @@ module GemTester
     end
 
     def ruby
-      runner = join("ruby-runner#{rbconfig['EXEEXT']}")
+      runner = join("exe", "ruby#{rbconfig['EXEEXT']}")
+      return runner if File.exist?(runner)
 
-      if File.exist?(runner)
-        runner
-      else
-        join("#{rbconfig['RUBY_INSTALL_NAME']}#{rbconfig['EXEEXT']}")
-      end
+      runner = join("ruby-runner#{rbconfig['EXEEXT']}")
+      return runner if File.exist?(runner)
+
+      join("#{rbconfig['RUBY_INSTALL_NAME']}#{rbconfig['EXEEXT']}")
     end
 
     private
