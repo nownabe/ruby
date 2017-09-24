@@ -3,6 +3,7 @@
 module GemTester
   module Homebrew
     OPTIONS = {
+      "eventmachine" => proc { "--with-cppflags=-I#{prefix('openssl')}/include" },
       "pg" => proc { "--with-pg-config=#{prefix('postgresql')}/bin/pg_config" },
     }
 

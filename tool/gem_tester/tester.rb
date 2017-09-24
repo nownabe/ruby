@@ -3,6 +3,7 @@
 require "open3"
 
 require "gem_tester/command"
+require "gem_tester/homebrew"
 require "gem_tester/repository"
 require "gem_tester/result"
 
