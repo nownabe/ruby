@@ -50,6 +50,7 @@ module GemTester
 
       BANNER
 
+      opt.on("--shallow", "Clone gem repositories with --depth 1") { |v| @options[:shallow] = v }
       opt.on("--homebrew", "Build gems with homebrew") { |v| @options[:homebrew] = v }
       opt.on(
         "--homebrew-gems VAL",
@@ -71,7 +72,8 @@ module GemTester
         branch,
         config: config,
         debug: true,
-        homebrew: @options[:homebrew]
+        homebrew: @options[:homebrew],
+        shallow: @options[:shallow]
       )
       result = tester.run
 

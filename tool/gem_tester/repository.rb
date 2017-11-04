@@ -18,8 +18,9 @@ module GemTester
       detect_repository
     end
 
-    def clone
-      execute!("git clone #{repository} #{path}")
+    def clone(shallow: false)
+      depth = shallow ? "--depth 1" : ""
+      execute!("git clone #{depth} #{repository} #{path}")
     end
 
     def exist?

@@ -28,14 +28,16 @@ module GemTester
     attr_reader :homebrew
     attr_reader :manager
     attr_reader :repository
+    attr_reader :shallow
     attr_reader :spec
 
-    def initialize(gem_name, branch, config:, debug: false, homebrew: false)
+    def initialize(gem_name, branch, config:, debug: false, homebrew: false, shallow: false)
       @gem_name = gem_name
       @branch = branch
       @config = config
       @debug = debug
       @homebrew = homebrew
+      @shallow = shallow
 
       @condition = config.conditions[gem_name]
       @manager = config.manager
@@ -171,7 +173,7 @@ module GemTester
     def setup_repository
       unless repository.exist?
         puts "- Cloning repository from #{repository.repository} to #{repository.path}"
-        repository.clone
+        repository.clone(shallow: shallow)
       end
 
       puts "- Updating repository #{repository.path}"
