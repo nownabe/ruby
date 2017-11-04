@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require "optparse"
+
 require "gem_tester/sandbox"
 require "gem_tester/tester"
 
 module GemTester
   class Runner
     def initialize(args = ARGV)
+      @options = {}
       parse_args(args)
     end
 
@@ -31,16 +34,16 @@ module GemTester
     private
 
     def parse_args(args)
-      @homebrew = false
+      opt = OptionParser.new
+      opt.on("--homebrew", "Build gems with homebrew") { |v| @options[:homebrew] = v }
+      opt.on(
+        "--homebrew-gems VAL",
+        "Build specified gems with homebrew"
+      ) { |v| @options[:homebrew] = v.split(",") }
+      # TODO: --conditions=
+      opt.parse!(args)
 
-      @test_gems = ARGV.map { |a| a.split(",") }.flatten.each_with_object({}) do |g, obj|
-        # TODO: --help
-        # TODO: --conditions=
-        if /--with-homebrew(=(?<gems>.+))?/ =~ g
-          @homebrew = gems ? gems.split(",") : true
-          next
-        end
-
+      @test_gems = args.map { |a| a.split(",") }.flatten.each_with_object({}) do |g, obj|
         name, branch = g.split(":")
         obj[name] = branch
       end
@@ -53,7 +56,7 @@ module GemTester
         branch,
         config: config,
         debug: true,
-        homebrew: @homebrew
+        homebrew: @options[:homebrew]
       )
       result = tester.run
 
