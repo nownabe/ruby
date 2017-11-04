@@ -35,6 +35,21 @@ module GemTester
 
     def parse_args(args)
       opt = OptionParser.new
+
+      opt.banner = <<~BANNER
+
+        Usage: make test-gems [GEMS=gems] [OPTIONS=options]
+
+        Examples:
+
+          make test-gems                        test all gems in conditions.yaml
+          make test-gems GEMS=rack,rake         test rack gem and rake gem
+          make test-gems GEMS=rack:2.0.3,rake   test rack version 2.0.3 and rake (git branch or tag)
+
+        Options:
+
+      BANNER
+
       opt.on("--homebrew", "Build gems with homebrew") { |v| @options[:homebrew] = v }
       opt.on(
         "--homebrew-gems VAL",
